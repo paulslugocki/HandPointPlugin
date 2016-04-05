@@ -1,8 +1,11 @@
-cordova.define("com.cordova.handpointplugin.HandPointPlugin", function(require, exports, module) { /*global cordova*/
+ /*global cordova*/
 module.exports = {
 
     connect: function (name, address, port, method, success, failure) {
         cordova.exec(success, failure, "HandPointPlugin", "connect", [{"name": name, "address": address, "port": port, "method": method}]);
+    },
+    disconnect: function (name, address, port, method, success, failure) {
+        cordova.exec(success, failure, "HandPointPlugin", "disconnect", []);
     },
     connectWithCurrentDevice: function (success, failure) {
         cordova.exec(success, failure, "HandPointPlugin", "connectWithCurrentDevice", []);
@@ -21,7 +24,11 @@ module.exports = {
     },
     init: function (success, failure) {
         cordova.exec(success, failure, "HandPointPlugin", "init", []);
+    },
+    TransactionStatusTrigger: function (success, failure) {
+        cordova.exec(success, failure, "HandPointPlugin", "TransactionStatusTrigger", []);
     }
+    
 	
   };
-});
+

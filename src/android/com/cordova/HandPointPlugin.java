@@ -15,16 +15,23 @@ import android.app.Activity;
 
 import android.content.Context;
 
+
+import android.util.Log;
+
 import com.handpoint.api.*;
 
+//adb logcat HandPoint:D *:S
 
-public class HandPointPlugin extends CordovaPlugin implements Events.Required {
+
+public class HandPointPlugin extends CordovaPlugin implements Events.Required, Events.Status {
     
 	Hapi api;
     Device device;
     @SuppressWarnings("unused")
 	private CallbackContext callbackContext;
     private CallbackContext List_callbackContext;
+    private CallbackContext Status_callbackContext;
+    private CallbackContext Connection_callbackContext;
     
     // Debugging
     private static final String TAG = "HandPoint";
@@ -53,8 +60,11 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required {
     
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-    	 LOG.d(TAG, "action = " + action);
+    	 Log.d(TAG, "action = " + action);
+        
     	 
+         
+         
     	 appContext = this.cordova.getActivity().getApplicationContext();
          
     	 this.callbackContext = callbackContext;
@@ -97,7 +107,19 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required {
         	 SetDeviceName(args, callbackContext);
         	 retValue = true;
         	 
-         }   else {
+         }   else if (action.equals("disconnect")) {
+             //disonnect Device
+             disconnect(callbackContext);
+             retValue = true;
+             
+         }
+         else if (action.equals("TransactionStatusTrigger")) {
+             //disonnect Device
+             TransactionStatusTrigger(callbackContext);
+             retValue = true;
+             
+         }
+         else {
              retValue = false;
              
          }
@@ -106,11 +128,12 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required {
     }
 
     public void initApi(Context context, CallbackContext callbackContext){
-      
+     
         this.api = HapiFactory.getAsyncInterface(this, context).defaultSharedSecret(sharedSecret_key);
       //Register a listener for required events
         this.api.addRequiredEventHandler(this);
-        
+        this.api.addStatusNotificationEventHandler(this);
+       
         //The api is now initialized. Yay! we've even set a default shared secret!
         //But we need to connect to a device to start taking payments.
         //Let's search for them:
@@ -218,11 +241,19 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required {
     	callbackContext.success();
     }
     
-    public void disconnect() throws JSONException {
+    public void disconnect(CallbackContext callbackContext) throws JSONException {
     	//Disconnect from current device
     	api.disconnect();
+
+        callbackContext.success();
     }
-    
+
+    public void searchDevices(CallbackContext callbackContext) throws JSONException {
+        
+        api.listDevices(ConnectionMethod.BLUETOOTH);
+
+        callbackContext.success();
+    }
     
     public boolean pay(JSONArray args, CallbackContext callbackContext) throws JSONException{
     	String price;
@@ -231,21 +262,23 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required {
     	
     	price = obj.optString("price");
         currency = obj.optString("currency");
-    	
+    	Log.d(TAG,price);
+        Log.d(TAG,currency);
     	Currency _currency;
-    	_currency = Currency.GBP;
-    	if(currency == "GBP") {
+    	_currency = Currency.EUR;
+    
+
+    	if(currency.equals("GBP")) {
     		_currency = Currency.GBP;
-    	}
-    	if(currency == "ZAR") {
+    	} else if(currency.equals("ZAR")) {
     		_currency = Currency.ZAR;
-    	}
-    	if(currency == "USD") {
+    	} else if(currency.equals("USD")) {
+            Log.d(TAG,"if usd");
     		_currency = Currency.USD;
-    	}
-    	if(currency == "EUR") {
+    	} else if(currency.equals("EUR")) {
     		_currency = Currency.EUR;
     	}
+        /*
     	if(currency == "CNY") {
     		_currency = Currency.CNY;
     	}
@@ -279,7 +312,7 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required {
     	if(currency == "JPY") {
     		_currency = Currency.JPY;
     	}
-    	
+    	*/
     	boolean bReturn =  this.api.sale(new BigInteger(price), _currency);
     	if(bReturn == true ){
     		callbackContext.success("success");
@@ -314,18 +347,64 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required {
     	
     	//callbackContext.success(message);
     }
+    public void TransactionStatusTrigger(CallbackContext callbackContext) {
+
+        Status_callbackContext = callbackContext; 
+        
+        //callbackContext.success(message);
+    }
     
     @Override
     public void signatureRequired(SignatureRequest signatureRequest, Device device){
+        Log.d(TAG, "SIG REQ: " + signatureRequest);
         //You'll be notified here if a sale process needs signature verification
         //See documentation
     }
 
     @Override
     public void endOfTransaction(TransactionResult transactionResult, Device device){
+            Log.d(TAG,"TRAN END: " + transactionResult.getStatusMessage());
+
 	        if(transactionResult.getFinStatus() == FinancialStatus.AUTHORISED){
 	            //...
-	        }
+                  Log.d(TAG,"TRAN AUTHORISED");
+                  Log.d(TAG, transactionResult.getCustomerReceipt());
+	        } else if(transactionResult.getFinStatus() == FinancialStatus.DECLINED){
+                //...
+                  Log.d(TAG,"TRAN DECLINED");
+            } else if(transactionResult.getFinStatus() == FinancialStatus.PROCESSED){
+                //...
+                  Log.d(TAG,"TRAN PROCESSED");
+            } else if(transactionResult.getFinStatus() == FinancialStatus.FAILED){
+                //...
+                  Log.d(TAG,"TRAN FAILED");
+            } else if(transactionResult.getFinStatus() == FinancialStatus.CANCELLED){
+                //...
+                  Log.d(TAG,"TRAN CANCELLED");
+            }
+    }
+    
+    @Override
+    public void currentTransactionStatus(StatusInfo statusInfo, Device device) {
+              /*
+UserCancelled WaitingForCard CardInserted ApplicationSelection ApplicationConfirmation AmountValidation PinInput ManualCardInput WaitingForCardRemoval TipInput AuthenticatingPos WaitingForSignature ConnectingToHost SendingToHost ReceivingFromHost DisconnectingFromHost PinInputComplete Undefined
+           */
+           
+            
+            Log.d(TAG,"TRANS STATUS: " + statusInfo.getMessage());
+            
+           
+            
+        
+            PluginResult result = new PluginResult(PluginResult.Status.OK, statusInfo.getMessage() );
+            result.setKeepCallback(true);
+             Status_callbackContext.sendPluginResult(result);
+       
+        }
+
+    @Override
+    public void connectionStatusChanged(ConnectionStatus connectionStatus, Device device) {
+        Log.d(TAG,"CONN STATUS: " + connectionStatus);
     }
     
 }
