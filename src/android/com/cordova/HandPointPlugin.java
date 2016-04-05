@@ -118,6 +118,9 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
              TransactionStatusTrigger(callbackContext);
              retValue = true;
              
+         } else if (action.equals("searchDevices")) {
+            searchDevices(callbackContext);
+            retValue = true;
          }
          else {
              retValue = false;
@@ -137,7 +140,7 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
         //The api is now initialized. Yay! we've even set a default shared secret!
         //But we need to connect to a device to start taking payments.
         //Let's search for them:
-        this.api.listDevices(ConnectionMethod.BLUETOOTH);
+        //this.api.listDevices(ConnectionMethod.BLUETOOTH);
         
         //This triggers the search, you should expect the results in the listener defined above
         callbackContext.success();
@@ -250,9 +253,11 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
 
     public void searchDevices(CallbackContext callbackContext) throws JSONException {
         
+        Log.d(TAG,"searching...");
         api.listDevices(ConnectionMethod.BLUETOOTH);
-
-        callbackContext.success();
+        List_callbackContext = callbackContext; 
+        
+        //callbackContext.success();
     }
     
     public boolean pay(JSONArray args, CallbackContext callbackContext) throws JSONException{
