@@ -152,9 +152,21 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
   @Override
   public void deviceDiscoveryFinished(List<Device> devices){
 
+        Log.d(TAG,"Discovery Finished");
+/*
+E/AndroidRuntime(17581): FATAL EXCEPTION: pool-3-thread-1
+E/AndroidRuntime(17581): Process: com.ionicframework.m2payionic508045, PID: 17581
+E/AndroidRuntime(17581): java.lang.NullPointerException: Attempt to invoke virtual method 'boolean java.lang.String.equals(java.lang.Object)' on a null object reference
+E/AndroidRuntime(17581):    at com.cordova.handpointplugin.HandPointPlugin.deviceDiscoveryFinished(HandPointPlugin.java:158)
+E/AndroidRuntime(17581):    at com.handpoint.api.EventHandler$3.run(EventHandler.java:102)
+E/AndroidRuntime(17581):    at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1112)
+E/AndroidRuntime(17581):    at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:587)
+E/AndroidRuntime(17581):    at java.lang.Thread.run(Thread.java:818)
+*/
+
 	  myListOfDevices = devices;
       for(Device device : devices){
-    	  if(device.getName().equals(deviceName)){
+    	  if(device.getName() != null  && device.getName().equals(deviceName)){
     		  //We'll remember the device for this session, but is cool that you do too
               this.device = device;
               this.api.useDevice(this.device);
