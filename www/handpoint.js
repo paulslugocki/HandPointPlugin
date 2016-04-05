@@ -27,7 +27,11 @@ module.exports = {
     },
     TransactionStatusTrigger: function (success, failure) {
         cordova.exec(success, failure, "HandPointPlugin", "TransactionStatusTrigger", []);
+    },
+    searchDevices: function (success, failure) {
+        cordova.exec(success, failure, "HandPointPlugin", "searchDevices", []);
     }
+ 
     
 	
   };
