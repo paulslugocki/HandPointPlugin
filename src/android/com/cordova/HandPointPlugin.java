@@ -29,6 +29,7 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
  Device device;
  @SuppressWarnings("unused")
  private CallbackContext callbackContext;
+
  private CallbackContext List_callbackContext;
  private CallbackContext Status_callbackContext;
  private CallbackContext Connection_callbackContext;
@@ -54,7 +55,9 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
  private String sharedSecret_key;
  private String deviceName;
  private Context appContext;
- private boolean done;
+
+ private boolean connectCalled;
+ private boolean isConnected;
 
  public HandPointPlugin() {
   super();
@@ -192,6 +195,12 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
  }
 
  public void connect(JSONArray args, CallbackContext callbackContext) throws JSONException {
+
+    if(isConnected) {
+        callbackContext.error("Device already connected");
+        return;
+    }
+
   JSONObject obj = args.optJSONObject(0);
   String name = obj.optString("name");
   String address = obj.optString("address");
@@ -200,6 +209,7 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
   ConnectionMethod method;
 
   method = ConnectionMethod.BLUETOOTH;
+
   if (connectionMethod == "USB") {
    method = ConnectionMethod.USB;
   }
@@ -226,19 +236,37 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
 
   Hapi bFlag = api.useDevice(device);
   //Log.d(TAG, bFlag);
-  
-   callbackContext.success("success");
+
+  connectCalled = true;
+  Connection_callbackContext = callbackContext;  
+   //callbackContext.success("success");
   
  }
 
 
 
 
- public void disconnect(CallbackContext callbackContext) throws JSONException {
+ public boolean disconnect(CallbackContext callbackContext) throws JSONException {
   //Disconnect from current device
-  api.disconnect();
 
-  callbackContext.success();
+    //already disconnected 
+    if(!isConnected){
+        callbackContext.error("Device already disconnected.");
+        return false;
+    }
+
+  boolean bReturn = api.disconnect();
+
+
+   if (bReturn == true) {
+    
+       callbackContext.success("Device disconnected.");
+      } else {
+        
+       callbackContext.error("Device not disconnected.");
+      }
+
+      return bReturn;
  }
 
  public void searchDevices(CallbackContext callbackContext) throws JSONException {
@@ -384,9 +412,11 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
    
   } else if (transactionResult.getFinStatus() == FinancialStatus.DECLINED) {
    //...
+    Log.d(TAG, transactionResult.getCustomerReceipt());
         try {
         json.put("status", "DECLINED");
         json.put("message",transactionResult.getStatusMessage());
+         json.put("receipt",transactionResult.getCustomerReceipt());
        } catch (JSONException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
@@ -396,6 +426,7 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
     PluginResult result = new PluginResult(PluginResult.Status.OK, json);
     result.setKeepCallback(true);
     Status_callbackContext.sendPluginResult(result);
+    Log.d(TAG, transactionResult.getCustomerReceipt());
    Log.d(TAG, "TRAN DECLINED");
   } else if (transactionResult.getFinStatus() == FinancialStatus.PROCESSED) {
    //...
@@ -403,6 +434,7 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
        try {
         json.put("status", "PROCESSED");
         json.put("message",transactionResult.getStatusMessage());
+         json.put("receipt",transactionResult.getCustomerReceipt());
        } catch (JSONException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
@@ -413,12 +445,15 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
     PluginResult result = new PluginResult(PluginResult.Status.OK, json);
     result.setKeepCallback(true);
     Status_callbackContext.sendPluginResult(result);
+    Log.d(TAG, transactionResult.getCustomerReceipt());
   } else if (transactionResult.getFinStatus() == FinancialStatus.FAILED) {
    //...
    Log.d(TAG, "TRAN FAILED");
+   Log.d(TAG, transactionResult.getCustomerReceipt());
        try {
         json.put("status", "FAILED");
          json.put("message",transactionResult.getStatusMessage());
+          json.put("receipt",transactionResult.getCustomerReceipt());
        } catch (JSONException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
@@ -434,6 +469,7 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
         try {
         json.put("status", "CANCELLED");
          json.put("message",transactionResult.getStatusMessage());
+          json.put("receipt",transactionResult.getCustomerReceipt());
        } catch (JSONException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
@@ -445,6 +481,7 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
     result.setKeepCallback(true);
     Status_callbackContext.sendPluginResult(result);
     Log.d(TAG, "TRAN CANCELLED");
+    Log.d(TAG, transactionResult.getCustomerReceipt());
   }
  }
 
@@ -472,7 +509,33 @@ if (statusInfo.getStatus() == StatusInfo.Status.WaitingForCard) {
 
  @Override
  public void connectionStatusChanged(ConnectionStatus connectionStatus, Device device) {
-  Log.d(TAG, "CONN STATUS: " + connectionStatus);
+    Log.d(TAG, "CONN STATUS: " + connectionStatus.name());
+
+    if(connectionStatus.name() == "Connected") {
+
+        //store conenction state
+        isConnected = true;
+        
+        //if we're attempting to connect, let's call appopriate callback
+        if(connectCalled){
+            connectCalled = false;
+            Connection_callbackContext.success("Device connected");
+        }
+        
+        
+    } else if (connectionStatus.name() == "Disconnected") {
+         
+         //store conenction state
+         isConnected = false;
+
+         //if we're attempting to connect, let's call appopriate callback
+         if(connectCalled){
+            connectCalled = false;
+            Connection_callbackContext.error("Device not connected");
+         }
+        
+    }
+    
  }
 
 }

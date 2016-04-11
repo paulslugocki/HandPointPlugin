@@ -4,7 +4,7 @@ module.exports = {
     connect: function (name, address, port, method, success, failure) {
         cordova.exec(success, failure, "HandPointPlugin", "connect", [{"name": name, "address": address, "port": port, "method": method}]);
     },
-    disconnect: function (name, address, port, method, success, failure) {
+    disconnect: function (success, failure) {
         cordova.exec(success, failure, "HandPointPlugin", "disconnect", []);
     },
     connectWithCurrentDevice: function (success, failure) {
