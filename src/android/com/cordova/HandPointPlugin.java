@@ -285,7 +285,7 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
   String price;
   String currency;
   String budget;
-  String optionalParameters;
+  String customerReference;
 
   JSONObject obj = args.optJSONObject(0);
 
@@ -293,12 +293,13 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
   currency = obj.optString("currency");
   
   //we need to check are optional parameters provided, then construct the function call
-  //budget = obj.optString("budget");
-  //optionalParameters = obj.optString("optionalParameters");
+  budget = obj.optString("budget");
+  customerReference = obj.optString("customerReference");
 
-  //Map optionalParameters = new HashMap();
-  //optionalParameters.put("Budget", budget);
-  //optionalParameters.put("CustomerReference",customerReference);
+  Map optionalParameters = new HashMap();
+  
+  optionalParameters.put("Budget", budget);
+  optionalParameters.put("CustomerReference",customerReference);
 
 
   Currency _currency;
@@ -340,9 +341,9 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
  
 
   //we should check are parameters provided then call provide it as a parameter
-  //boolean bReturn = api.sale(new BigInteger(price), _currency, optionalParameters);
+  boolean bReturn = api.sale(new BigInteger(price), _currency, optionalParameters);
 
-  boolean bReturn = api.sale(new BigInteger(price), _currency);
+  //boolean bReturn = api.sale(new BigInteger(price), _currency);
 
   if (bReturn == true) {
    callbackContext.success("Payment succesfully initialized.");
