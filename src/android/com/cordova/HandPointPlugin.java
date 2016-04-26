@@ -5,6 +5,10 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.HashMap;
+import java.util.Map;
+
+
 import org.apache.cordova.*; // Cordova 3.x
 
 import org.json.JSONArray;
@@ -97,10 +101,8 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
    retValue = true;
 
   } else if (action.equals("ListDevices")) {
-   //Connect Device
-
+   //List devices Device
    ListDevices(callbackContext);
-
    retValue = true;
 
   } else if (action.equals("SetMerchantKey")) {
@@ -208,27 +210,28 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
   String connectionMethod = obj.optString("method");
   ConnectionMethod method;
 
-  method = ConnectionMethod.BLUETOOTH;
+  method = ConnectionMethod.SIMULATOR;
 
-  if (connectionMethod == "USB") {
+
+  if (connectionMethod.equals("USB")) {
    method = ConnectionMethod.USB;
   }
-  if (connectionMethod == "SERIAL") {
+  if (connectionMethod.equals("SERIAL")) {
    method = ConnectionMethod.SERIAL;
   }
-  if (connectionMethod == "BLUETOOTH") {
+  if (connectionMethod.equals("BLUETOOTH")) {
    method = ConnectionMethod.BLUETOOTH;
   }
-  if (connectionMethod == "HTTPS") {
+  if (connectionMethod.equals("HTTPS")) {
    method = ConnectionMethod.HTTPS;
   }
-  if (connectionMethod == "WIFI") {
+  if (connectionMethod.equals("WIFI")) {
    method = ConnectionMethod.WIFI;
   }
-  if (connectionMethod == "ETHERNET") {
+  if (connectionMethod.equals("ETHERNET")) {
    method = ConnectionMethod.ETHERNET;
   }
-  if (connectionMethod == "SIMULATOR") {
+  if (connectionMethod.equals("SIMULATOR")) {
    method = ConnectionMethod.SIMULATOR;
   }
 
@@ -281,67 +284,70 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
  public boolean pay(JSONArray args, CallbackContext callbackContext) throws JSONException {
   String price;
   String currency;
+  String budget;
+  String optionalParameters;
+
   JSONObject obj = args.optJSONObject(0);
 
   price = obj.optString("price");
   currency = obj.optString("currency");
-  Log.d(TAG, price);
-  Log.d(TAG, currency);
+  
+  //we need to check are optional parameters provided, then construct the function call
+  //budget = obj.optString("budget");
+  //optionalParameters = obj.optString("optionalParameters");
+
+  //Map optionalParameters = new HashMap();
+  //optionalParameters.put("Budget", budget);
+  //optionalParameters.put("CustomerReference",customerReference);
+
+
   Currency _currency;
-  _currency = Currency.EUR;
-
-
+ 
   if (currency.equals("GBP")) {
    _currency = Currency.GBP;
   } else if (currency.equals("ZAR")) {
    _currency = Currency.ZAR;
   } else if (currency.equals("USD")) {
-   Log.d(TAG, "if usd");
    _currency = Currency.USD;
   } else if (currency.equals("EUR")) {
    _currency = Currency.EUR;
+  } else if(currency.equals("CNY")) {
+    _currency = Currency.CNY;
+  } else if(currency.equals("EGP")) {
+    _currency = Currency.EGP;
+  } else if(currency.equals("INR")) {
+    _currency = Currency.INR;
+  } else if(currency.equals("UAH")) {
+    _currency = Currency.UAH;
+  } else if(currency.equals("TWD")) {
+    _currency = Currency.TWD;
+  } else if(currency.equals("AUD")) {
+    _currency = Currency.AUD;
+  } else if(currency.equals("CAD")) {
+    _currency = Currency.CAD;
+  } else if(currency.equals("SGD")) {
+    _currency = Currency.SGD;
+  } else if(currency.equals("CHF")) {
+    _currency = Currency.CHF;
+  } else if(currency.equals("MYR")) {
+    _currency = Currency.MYR;
+  } else if(currency.equals("JPY")) {
+    _currency = Currency.JPY;
+  } else {
+     callbackContext.error("Currency not supported.");
+     return false;
   }
-  /*
-        if(currency == "CNY") {
-            _currency = Currency.CNY;
-        }
-        if(currency == "EGP") {
-            _currency = Currency.EGP;
-        }
-        if(currency == "INR") {
-            _currency = Currency.INR;
-        }
-        if(currency == "UAH") {
-            _currency = Currency.UAH;
-        }
-        if(currency == "TWD") {
-            _currency = Currency.TWD;
-        }
-        if(currency == "AUD") {
-            _currency = Currency.AUD;
-        }
-        if(currency == "CAD") {
-            _currency = Currency.CAD;
-        }
-        if(currency == "SGD") {
-            _currency = Currency.SGD;
-        }
-        if(currency == "CHF") {
-            _currency = Currency.CHF;
-        }
-        if(currency == "MYR") {
-            _currency = Currency.MYR;
-        }
-        if(currency == "JPY") {
-            _currency = Currency.JPY;
-        }
-        */
+ 
+
+  //we should check are parameters provided then call provide it as a parameter
+  //boolean bReturn = api.sale(new BigInteger(price), _currency, optionalParameters);
+
   boolean bReturn = api.sale(new BigInteger(price), _currency);
 
   if (bReturn == true) {
-   callbackContext.success("success");
+   callbackContext.success("Payment succesfully initialized.");
   } else {
-   callbackContext.error("fail");
+   callbackContext.error("Payment initialization failed.");
   }
 
   return bReturn;
@@ -381,6 +387,7 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
  @Override
  public void signatureRequired(SignatureRequest signatureRequest, Device device) {
   Log.d(TAG, "SIG REQ: " + signatureRequest);
+    this.api.signatureResult(true);
   //You'll be notified here if a sale process needs signature verification
   //See documentation
  }
@@ -416,7 +423,7 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
         try {
         json.put("status", "DECLINED");
         json.put("message",transactionResult.getStatusMessage());
-         json.put("receipt",transactionResult.getCustomerReceipt());
+        json.put("receipt",transactionResult.getCustomerReceipt());
        } catch (JSONException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();

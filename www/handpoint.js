@@ -11,7 +11,7 @@ module.exports = {
         cordova.exec(success, failure, "HandPointPlugin", "connectWithCurrentDevice", []);
     },
 	pay: function (price, currency, success, failure) {
-        cordova.exec(success, failure, "HandPointPlugin", "pay", [{"price": price, "currency": currency}]);
+        cordova.exec(success, failure, "HandPointPlugin", "pay", [{"price": price, "currency": currency, "budget": budget, "customerReference": customerReference}]);
     },
     SetMerchantKey: function (key, success, failure) {
         cordova.exec(success, failure, "HandPointPlugin", "SetMerchantKey", [{"key":key}]);
