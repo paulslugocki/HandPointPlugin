@@ -30,6 +30,9 @@ module.exports = {
     },
     searchDevices: function (success, failure) {
         cordova.exec(success, failure, "HandPointPlugin", "searchDevices", []);
+    },
+    connectionStatusStream: function (success, failure) {
+        cordova.exec(success, failure, "HandPointPlugin", "connectionStatusStream", []);
     }
  
     

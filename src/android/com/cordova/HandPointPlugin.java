@@ -24,7 +24,7 @@ import android.util.Log;
 
 import com.handpoint.api.*;
 
-//adb logcat HandPoint:D *:S
+//adb logcat HandPoint:D *:S/
 
 
 public class HandPointPlugin extends CordovaPlugin implements Events.Required, Events.Status {
@@ -37,6 +37,7 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
  private CallbackContext List_callbackContext;
  private CallbackContext Status_callbackContext;
  private CallbackContext Connection_callbackContext;
+ private CallbackContext ConnectionStatus_callbackContext;
 
  // Debugging
  private static final String TAG = "HandPoint";
@@ -61,6 +62,7 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
  private Context appContext;
 
  private boolean connectCalled;
+ private boolean connectStatusCalled;
  private boolean isConnected;
 
  public HandPointPlugin() {
@@ -128,6 +130,11 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
   } else if (action.equals("searchDevices")) {
    //search for wifi devices.
    searchDevices(callbackContext);
+   retValue = true;
+
+  } else if (action.equals("connectionStatusStream")) {
+   //search for wifi devices.
+   connectionStatusStream(callbackContext);
    retValue = true;
 
   } else {
@@ -281,6 +288,13 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
   //callbackContext.success();
  }
 
+public void connectionStatusStream(CallbackContext callbackContext) throws JSONException {
+
+  connectStatusCalled = true;
+  ConnectionStatus_callbackContext = callbackContext;
+
+}
+
  public boolean pay(JSONArray args, CallbackContext callbackContext) throws JSONException {
   String price;
   String currency;
@@ -297,9 +311,9 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
   customerReference = obj.optString("customerReference");
 
   Map optionalParameters = new HashMap();
-  
   optionalParameters.put("Budget", budget);
-  optionalParameters.put("CustomerReference",customerReference);
+  optionalParameters.put("CustomerReference", customerReference);
+
 
 
   Currency _currency;
@@ -407,7 +421,13 @@ public class HandPointPlugin extends CordovaPlugin implements Events.Required, E
     try {
         json.put("status", "AUTHORISED");
         json.put("message",transactionResult.getStatusMessage());
+        json.put("cardSchemeName",transactionResult.getCardSchemeName());
+        json.put("customerReference",transactionResult.getCustomerReference());
         json.put("receipt",transactionResult.getCustomerReceipt());
+        json.put("merchantReceipt",transactionResult.getMerchantReceipt());
+        json.put("cardTypeId",transactionResult.getCardTypeId());
+        json.put("eFTTransactionID",transactionResult.geteFTTransactionID());
+       
        } catch (JSONException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
@@ -519,10 +539,20 @@ if (statusInfo.getStatus() == StatusInfo.Status.WaitingForCard) {
  public void connectionStatusChanged(ConnectionStatus connectionStatus, Device device) {
     Log.d(TAG, "CONN STATUS: " + connectionStatus.name());
 
+    if(connectStatusCalled){
+      PluginResult result = new PluginResult(PluginResult.Status.OK, connectionStatus.name() );
+    result.setKeepCallback(true);
+    ConnectionStatus_callbackContext.sendPluginResult(result);
+
+    }
+    
+
     if(connectionStatus.name() == "Connected") {
 
         //store conenction state
         isConnected = true;
+         
+        
         
         //if we're attempting to connect, let's call appopriate callback
         if(connectCalled){
