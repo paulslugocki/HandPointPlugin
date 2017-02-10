@@ -5,8 +5,8 @@
     id="com.cordova.handpointplugin"
     version="0.1.0">
 
-    <name>HandPoint Android Plugin</name>
-    <description>HandPoint Android Plugin</description>
+    <name>HandPoint Plugin</name>
+    <description>HandPoint Plugin</description>
     <license>Apache 2.0</license>
     <keywords>handpoint, BLE, arduino</keywords>
 
@@ -34,10 +34,60 @@
                 target-dir="libs" />
         <source-file src="src/android/libs/hapi-android-3.2.5-javadoc.jar"
                 target-dir="libs" />
-				
+
         <config-file target="AndroidManifest.xml" parent="/manifest">
             <uses-permission android:name="android.permission.BLUETOOTH" />
             <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+        </config-file>
+
+    </platform>
+
+    <platform name="ios">
+
+        <config-file target="res/xml/config.xml" parent="/widget">
+            <feature name="HandPointPlugin">
+                <param name="ios-package" value="HandPointPlugin"/>
+            </feature>
+        </config-file>
+
+        <!-- Simulator -->
+        <source-file src="src/ios/HeftSimulatorLibrary/libheft.a" framework="true" />
+        <header-file src="src/ios/HeftSimulatorLibrary/include/Cmdids.h" />
+        <header-file src="src/ios/HeftSimulatorLibrary/include/HeftClient.h" />
+        <header-file src="src/ios/HeftSimulatorLibrary/include/HeftManager.h" />
+        <header-file src="src/ios/HeftSimulatorLibrary/include/HeftRemoteDevice.h" />
+        <header-file src="src/ios/HeftSimulatorLibrary/include/HeftStatusReportPublic.h" />
+
+        <!-- Live device -->
+        <source-file src="src/ios/HeftLibrary/libheft.a" framework="true" />
+        <header-file src="src/ios/HeftLibrary/include/Cmdids.h" />
+        <header-file src="src/ios/HeftLibrary/include/HeftClient.h" />
+        <header-file src="src/ios/HeftLibrary/include/HeftManager.h" />
+        <header-file src="src/ios/HeftLibrary/include/HeftRemoteDevice.h" />
+        <header-file src="src/ios/HeftLibrary/include/HeftStatusReportPublic.h" />
+
+        <!-- CoreBlueooth -->
+        <framework src="CoreBluetooth.framework" />
+        <!-- CoreBlueooth -->
+        <framework src="CoreSecurity.framework" />
+        <!-- C++ support -->
+        <framework src="libc++.dylib" />
+
+        <!-- Plugin files -->
+        <header-file src="HandPointPlugin.h" />
+        <source-file src="HandPointPlugin.m" />
+
+        <!-- Reason for Bluetooth usage -->
+        <preference name="BLUETOOTH_USAGE_DESCRIPTION" default=" "/>
+        <config-file target="*-Info.plist" parent="NSBluetoothPeripheralUsageDescription">
+            <string>$BLUETOOTH_USAGE_DESCRIPTION</string>
+        </config-file>
+
+        <!-- External accessory protocol -->
+        <config-file target="*-Info.plist" parent="UISupportedExternalAccessoryProtocols">
+          <array>
+              <string>com.datecs.pinpad</string>
+          </array>
         </config-file>
 
     </platform>
