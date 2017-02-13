@@ -72,8 +72,8 @@
         <framework src="Security.framework" />
         <!-- ExternalAccessory -->
         <framework src="ExternalAccessory.framework" />
-        <!-- C++ support -->
-        <framework src="libc++.tdb" />
+        <!-- C++ support ? -->
+        <!--framework src="libc++.tdb" /-->
 
         <!-- Plugin files -->
         <header-file src="src/ios/HandPointPlugin.h" />
