@@ -32,6 +32,11 @@ NSString* sharedSecret = @"01020304050607080910111213141516171819202122232425262
 
 }
 
+- (void)pluginInitialize
+{
+    NSLog(@"HandPoint plugin init.");
+}
+
 #pragma mark Other functions
 
 //Creating a heftclient
