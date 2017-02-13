@@ -74,8 +74,8 @@
         <framework src="libc++.dylib" />
 
         <!-- Plugin files -->
-        <header-file src="HandPointPlugin.h" />
-        <source-file src="HandPointPlugin.m" />
+        <header-file src="src/ios/HandPointPlugin.h" />
+        <source-file src="src/ios/HandPointPlugin.m" />
 
         <!-- Reason for Bluetooth usage -->
         <preference name="BLUETOOTH_USAGE_DESCRIPTION" default=" "/>
