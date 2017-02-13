@@ -6,7 +6,7 @@
 
 @implementation HandPointPlugin
 
-@synthesize heftClient, manager, transactionStatus;
+@synthesize heftClient, manager, transactionStatus, cardReaderSerial;
 //Set your unique shared secret here, provided by Handpoint with the dev kit
 NSString* sharedSecret = @"0102030405060708091011121314151617181920212223242526272829303132";
 
@@ -45,6 +45,10 @@ NSString* sharedSecret = @"01020304050607080910111213141516171819202122232425262
     transactionStatus = tStatus;
 }
 
+-(void)setCardReaderSerial:(NSString *)cSerial{
+    cardReaderSerial = cSerial;
+}
+
 //Converts a shared secret string to NSDATA which is used by the SDK(Will be implemented in the SDK in the future)
 -(NSData*)SharedSecretDataFromString:(NSString*)sharedSecretString;
 {
@@ -59,7 +63,9 @@ NSString* sharedSecret = @"01020304050607080910111213141516171819202122232425262
     NSLog(@"didConnect");
     heftClient = client;
     NSLog(@"Connected to %@", [[heftClient mpedInfo] objectForKey:kSerialNumberInfoKey]);
-    [cardReaderSerial setText:[[heftClient mpedInfo] objectForKey:kSerialNumberInfoKey]];
+    //[cardReaderSerial setText:[[heftClient mpedInfo] objectForKey:kSerialNumberInfoKey]];
+
+    [self setCardReaderSerial:[[heftClient mpedInfo] objectForKey:kSerialNumberInfoKey]];
 
     //clear status message
     [self setTransactionStatus:@""];
@@ -128,7 +134,8 @@ NSString* sharedSecret = @"01020304050607080910111213141516171819202122232425262
 
 -(void)didLostAccessoryDevice:(HeftRemoteDevice *)oldDevice{
     NSLog(@"didLostAccessoryDevice");
-    [cardReaderSerial setText:@"None"];
+    //[cardReaderSerial setText:@"None"];
+    [self setCardReaderSerial:@"None"];
     heftClient = nil;
 }
 

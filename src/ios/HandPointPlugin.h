@@ -16,5 +16,6 @@
   @property(nonatomic, strong) id<HeftClient> heftClient;
   @property(nonatomic, strong) HeftManager* manager;
   @property(nonatomic, strong) NSString* transactionStatus;
+  @property(nonatomic, strong) NSString* cardReaderSerial;
 
 @end
