@@ -59,12 +59,12 @@
         <header-file src="src/ios/libs/HeftSimulatorLibrary/include/HeftStatusReportPublic.h" />
 
         <!-- Live device -->
-        <source-file src="src/ios/libs/HeftLibrary/libheft.a" framework="true" />
+        <!--source-file src="src/ios/libs/HeftLibrary/libheft.a" framework="true" />
         <header-file src="src/ios/libs/HeftLibrary/include/Cmdids.h" />
         <header-file src="src/ios/libs/HeftLibrary/include/HeftClient.h" />
         <header-file src="src/ios/libs/HeftLibrary/include/HeftManager.h" />
         <header-file src="src/ios/libs/HeftLibrary/include/HeftRemoteDevice.h" />
-        <header-file src="src/ios/libs/HeftLibrary/include/HeftStatusReportPublic.h" />
+        <header-file src="src/ios/libs/HeftLibrary/include/HeftStatusReportPublic.h" /-->
 
         <!-- CoreBlueooth -->
         <framework src="CoreBluetooth.framework" />
