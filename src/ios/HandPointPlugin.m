@@ -1,3 +1,6 @@
+#import "Echo.h"
+#import <Cordova/CDVPlugin.h>
+
 @implementation HandPointPlugin
 
 - (void)echo:(CDVInvokedUrlCommand*)command
