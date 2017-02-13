@@ -44,9 +44,9 @@
 
     <platform name="ios">
 
-        <config-file target="res/xml/config.xml" parent="/widget">
+        <config-file target="config.xml" parent="/*">
             <feature name="HandPointPlugin">
-                <param name="ios-package" value="HandPointPlugin"/>
+                <param name="ios-package" value="HandPointPlugin" />
             </feature>
         </config-file>
 
