@@ -68,10 +68,10 @@
 
         <!-- CoreBlueooth -->
         <framework src="CoreBluetooth.framework" />
-        <!-- CoreBlueooth -->
-        <framework src="CoreSecurity.framework" />
+        <!-- Security -->
+        <framework src="Security.framework" />
         <!-- C++ support -->
-        <framework src="libc++.dylib" />
+        <framework src="libc++.tdb" />
 
         <!-- Plugin files -->
         <header-file src="src/ios/HandPointPlugin.h" />
