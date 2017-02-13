@@ -42,7 +42,7 @@ NSString* sharedSecret = @"01020304050607080910111213141516171819202122232425262
 }
 
 -(void)setTransactionStatus:(NSString *)tStatus{
-  transactionStatus = transactionStatus
+    transactionStatus = tStatus;
 }
 
 //Converts a shared secret string to NSDATA which is used by the SDK(Will be implemented in the SDK in the future)
