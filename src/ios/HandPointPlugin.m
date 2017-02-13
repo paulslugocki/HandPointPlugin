@@ -1,4 +1,4 @@
-#import "Echo.h"
+#import "HandPointPlugin.h"
 #import <Cordova/CDVPlugin.h>
 
 @implementation HandPointPlugin
