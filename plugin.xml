@@ -51,20 +51,20 @@
         </config-file>
 
         <!-- Simulator -->
-        <source-file src="src/ios/HeftSimulatorLibrary/libheft.a" framework="true" />
-        <header-file src="src/ios/HeftSimulatorLibrary/include/Cmdids.h" />
-        <header-file src="src/ios/HeftSimulatorLibrary/include/HeftClient.h" />
-        <header-file src="src/ios/HeftSimulatorLibrary/include/HeftManager.h" />
-        <header-file src="src/ios/HeftSimulatorLibrary/include/HeftRemoteDevice.h" />
-        <header-file src="src/ios/HeftSimulatorLibrary/include/HeftStatusReportPublic.h" />
+        <source-file src="src/ios/libs/HeftSimulatorLibrary/libheft.a" framework="true" />
+        <header-file src="src/ios/libs/HeftSimulatorLibrary/include/Cmdids.h" />
+        <header-file src="src/ios/libs/HeftSimulatorLibrary/include/HeftClient.h" />
+        <header-file src="src/ios/libs/HeftSimulatorLibrary/include/HeftManager.h" />
+        <header-file src="src/ios/libs/HeftSimulatorLibrary/include/HeftRemoteDevice.h" />
+        <header-file src="src/ios/libs/HeftSimulatorLibrary/include/HeftStatusReportPublic.h" />
 
         <!-- Live device -->
-        <source-file src="src/ios/HeftLibrary/libheft.a" framework="true" />
-        <header-file src="src/ios/HeftLibrary/include/Cmdids.h" />
-        <header-file src="src/ios/HeftLibrary/include/HeftClient.h" />
-        <header-file src="src/ios/HeftLibrary/include/HeftManager.h" />
-        <header-file src="src/ios/HeftLibrary/include/HeftRemoteDevice.h" />
-        <header-file src="src/ios/HeftLibrary/include/HeftStatusReportPublic.h" />
+        <source-file src="src/ios/libs/HeftLibrary/libheft.a" framework="true" />
+        <header-file src="src/ios/libs/HeftLibrary/include/Cmdids.h" />
+        <header-file src="src/ios/libs/HeftLibrary/include/HeftClient.h" />
+        <header-file src="src/ios/libs/HeftLibrary/include/HeftManager.h" />
+        <header-file src="src/ios/libs/HeftLibrary/include/HeftRemoteDevice.h" />
+        <header-file src="src/ios/libs/HeftLibrary/include/HeftStatusReportPublic.h" />
 
         <!-- CoreBlueooth -->
         <framework src="CoreBluetooth.framework" />
