@@ -50,28 +50,7 @@
             </feature>
         </config-file>
 
-        <!-- Simulator -->
-        <source-file src="src/ios/libs/HeftSimulatorLibrary/libheft.a" framework="true" />
-        <header-file src="src/ios/libs/HeftSimulatorLibrary/include/Cmdids.h" />
-        <header-file src="src/ios/libs/HeftSimulatorLibrary/include/HeftClient.h" />
-        <header-file src="src/ios/libs/HeftSimulatorLibrary/include/HeftManager.h" />
-        <header-file src="src/ios/libs/HeftSimulatorLibrary/include/HeftRemoteDevice.h" />
-        <header-file src="src/ios/libs/HeftSimulatorLibrary/include/HeftStatusReportPublic.h" />
 
-        <!-- Live device -->
-        <!--source-file src="src/ios/libs/HeftLibrary/libheft.a" framework="true" />
-        <header-file src="src/ios/libs/HeftLibrary/include/Cmdids.h" />
-        <header-file src="src/ios/libs/HeftLibrary/include/HeftClient.h" />
-        <header-file src="src/ios/libs/HeftLibrary/include/HeftManager.h" />
-        <header-file src="src/ios/libs/HeftLibrary/include/HeftRemoteDevice.h" />
-        <header-file src="src/ios/libs/HeftLibrary/include/HeftStatusReportPublic.h" /-->
-
-        <!-- CoreBlueooth -->
-        <framework src="CoreBluetooth.framework" />
-        <!-- Security -->
-        <framework src="Security.framework" />
-        <!-- ExternalAccessory -->
-        <framework src="ExternalAccessory.framework" />
         <!-- C++ support ? -->
         <!--framework src="libc++.tdb" /-->
 
@@ -79,18 +58,7 @@
         <header-file src="src/ios/HandPointPlugin.h" />
         <source-file src="src/ios/HandPointPlugin.m" />
 
-        <!-- Reason for Bluetooth usage -->
-        <preference name="BLUETOOTH_USAGE_DESCRIPTION" default=" "/>
-        <config-file target="*-Info.plist" parent="NSBluetoothPeripheralUsageDescription">
-            <string>$BLUETOOTH_USAGE_DESCRIPTION</string>
-        </config-file>
 
-        <!-- External accessory protocol -->
-        <config-file target="*-Info.plist" parent="UISupportedExternalAccessoryProtocols">
-          <array>
-              <string>com.datecs.pinpad</string>
-          </array>
-        </config-file>
 
     </platform>
 
