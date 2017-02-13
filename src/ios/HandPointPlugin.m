@@ -45,6 +45,14 @@ NSString* sharedSecret = @"01020304050607080910111213141516171819202122232425262
   transactionStatus = transactionStatus
 }
 
+//Converts a shared secret string to NSDATA which is used by the SDK(Will be implemented in the SDK in the future)
+-(NSData*)SharedSecretDataFromString:(NSString*)sharedSecretString;
+{
+    NSMutableData* data = [NSMutableData data];
+    for (int i = 0 ; i < 32; i++) { NSRange range = NSMakeRange (i*2, 2); NSString *bytes = [sharedSecretString substringWithRange:range]; NSScanner* scanner = [NSScanner scannerWithString:bytes]; unsigned int intValue; [scanner scanHexInt:&intValue]; [data appendBytes:&intValue length:1]; }
+    return data;
+}
+
 #pragma mark HeftLibrary implementation
 
 -(void)didConnect:(id<HeftClient>)client {
